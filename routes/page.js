@@ -10,7 +10,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router("/profile", (req, res) => {
+router.get("/profile", (req, res) => {
   res.render("profile", { title: "내 정보 - NodeBird" });
 });
 

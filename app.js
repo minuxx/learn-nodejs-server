@@ -1,6 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const margan = require("morgan");
+const morgan = require("morgan");
 const path = require("path");
 const session = require("express-session");
 const nunjucks = require("nunjucks");
@@ -8,7 +8,6 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 const pageRouter = require("./routes/page");
-const morgan = require("morgan");
 
 const app = express();
 app.set("port", process.env.PORT || 8001);
@@ -20,7 +19,7 @@ nunjucks.configure("views", {
 
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json);
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
@@ -37,12 +36,14 @@ app.use(
 
 app.use("/", pageRouter);
 
+//router가 지정되어 있지 않을 때 에러 처리
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   error.status = 404;
   next(error);
 });
 
+//에러 처리
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
